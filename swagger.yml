@@ -1,0 +1,51 @@
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - https
+swagger: '2.0'
+info:
+  description: 'The purpose of this application is to build a crawler api'
+  title: Smartmei Crawler Microservice
+  version: 0.0.1
+host: localhost:5656
+basePath: /smartmei
+paths:
+  /crawler:
+    get:
+      description: Gets information about prices converted to dolar and euro.
+      produces:
+        - application/json
+      tags:
+        - Crawler
+      parameters:
+        - type: string
+          description: url
+          name: url
+          in: query
+          required: true
+      responses:
+        '200':
+          description: Crawler result
+          schema:
+            $ref: '#/definitions/CrawlerResponse'
+        '500':
+          description: Internal server error
+definitions:
+  CrawlerResponse:
+    properties:
+      rates:
+        x-nullable: false
+        properties:
+          brl:
+            type: number
+          usd:
+            type: number
+          eur:
+            type: number
+      description:
+        type: string
+      date:
+        type: string
