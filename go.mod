@@ -3,6 +3,7 @@ module github.com/dexterorion/smartmei
 go 1.13
 
 require (
+	github.com/gavv/httpexpect v2.0.0+incompatible
 	github.com/go-openapi/errors v0.19.4
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/go-openapi/swag v0.19.9

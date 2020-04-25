@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -35,7 +36,12 @@ func (sms SmartMeiService) CrawData(ctx context.Context, url string) (*model.Des
 	if err != nil {
 		return nil, errors.ErrorDoingRequest(err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, errors.InvalidStatusCode(http.StatusOK, response.StatusCode)

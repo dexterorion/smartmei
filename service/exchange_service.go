@@ -3,8 +3,11 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dexterorion/smartmei/errors"
@@ -24,7 +27,11 @@ func (exs ExchangeService) GetConversionRates(ctx context.Context, from string, 
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	request, err := http.NewRequest("GET", "https://api.exchangeratesapi.io/latest?base=BRL&symbols=USD,EUR", nil)
+
+	symbols := strings.Join(to, ",")
+	url := fmt.Sprintf("https://api.exchangeratesapi.io/latest?base=%s&symbols=%s", from, symbols)
+
+	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, errors.ErrorBuildingRequest(err)
 	}
@@ -32,7 +39,12 @@ func (exs ExchangeService) GetConversionRates(ctx context.Context, from string, 
 	if err != nil {
 		return nil, errors.ErrorDoingRequest(err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, errors.InvalidStatusCode(http.StatusOK, response.StatusCode)
